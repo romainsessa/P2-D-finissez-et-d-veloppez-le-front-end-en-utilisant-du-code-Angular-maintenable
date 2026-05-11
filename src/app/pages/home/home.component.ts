@@ -1,70 +1,75 @@
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {Component, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import Chart from 'chart.js/auto';
+import { Subject, takeUntil } from 'rxjs';
+import { DataService } from 'src/app/core/services/data.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
-  private olympicUrl = './assets/mock/olympic.json';
-  public pieChart!: Chart<"pie", number[], string>;
+export class HomeComponent implements OnInit, OnDestroy {
+
+  countries: string[] = [];
+  medals: number[] = [];
   public totalCountries: number = 0
   public totalJOs: number = 0
-  public error!:string
+
   titlePage: string = "Medals per Country";
+  public indicators: { label: string; value: number }[] = [];
 
-  constructor(private router: Router, private http:HttpClient) { }
+  public hasData: boolean = false;
+  public error: string = '';
+  private destroy$ = new Subject<void>();
 
+  constructor(private router: Router, private dataService: DataService) { }
+  
   ngOnInit() {
-    this.http.get<any[]>(this.olympicUrl).pipe().subscribe(
-      (data) => {
-        console.log(`Liste des données : ${JSON.stringify(data)}`);
-        if (data && data.length > 0) {
-          this.totalJOs = Array.from(new Set(data.map((i: any) => i.participations.map((f: any) => f.year)).flat())).length;
-          const countries: string[] = data.map((i: any) => i.country);
-          this.totalCountries = countries.length;
-          const medals = data.map((i: any) => i.participations.map((i: any) => (i.medalsCount)));
-          const sumOfAllMedalsYears = medals.map((i) => i.reduce((acc: any, i: any) => acc + i, 0));
-          this.buildPieChart(countries, sumOfAllMedalsYears);
-        }
-      },
-      (error:HttpErrorResponse) => {
-        console.log(`erreur : ${error}`);
-        this.error = error.message
-      }
-    )
-  }
 
-  buildPieChart(countries: string[], sumOfAllMedalsYears: number[]) {
-    const pieChart = new Chart("DashboardPieChart", {
-      type: 'pie',
-      data: {
-        labels: countries,
-        datasets: [{
-          label: 'Medals',
-          data: sumOfAllMedalsYears,
-          backgroundColor: ['#0b868f', '#adc3de', '#7a3c53', '#8f6263', 'orange', '#94819d'],
-          hoverOffset: 4
-        }],
+    this.dataService.getDashboardData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+      next: (data) => {
+
+        this.hasData = data.countries.length > 0;
+
+        if (!this.hasData) {
+          this.countries = [];
+          this.medals = [];
+          this.indicators = [];
+          this.error = "Aucune donnée."
+          return;
+        }
+
+        this.countries = data.countries;
+        this.medals = data.medals;
+        this.totalCountries = data.totalCountries;
+        this.totalJOs = data.totalJOs;
+
+        this.indicators = [
+          { label: 'Number of countries', value: this.totalCountries },
+          { label: 'Number of JOs', value: this.totalJOs }
+        ];
+
       },
-      options: {
-        aspectRatio: 2.5,
-        onClick: (e) => {
-          if (e.native) {
-            const points = pieChart.getElementsAtEventForMode(e.native, 'point', { intersect: true }, true)
-            if (points.length) {
-              const firstPoint = points[0];
-              const countryName = pieChart.data.labels ? pieChart.data.labels[firstPoint.index] : '';
-              this.router.navigate(['country', countryName]);
-            }
-          }
+      error: (err) => {
+        this.hasData = false;
+        if (err.status === 404) {
+          this.error = 'Données inaccessibles';
+        } else {
+          this.error = 'Erreur technique, veuillez réessayer plus tard';
         }
       }
     });
-    this.pieChart = pieChart;
   }
-}
 
+  onCountryClicked(country: string): void {
+    this.router.navigate(['country', country]);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+}

@@ -1,0 +1,13 @@
+<h2>Olympic games app</h2>
+<hr />
+<div>
+    <div class="center">
+        <div>{{ titlePage }}</div>
+    </div>
+    <div class="split">
+        <div *ngFor="let indicator of indicators">
+            <p>{{ indicator.label }}</p>
+            <p>{{ indicator.value }}</p>
+        </div>
+    </div>
+</div>

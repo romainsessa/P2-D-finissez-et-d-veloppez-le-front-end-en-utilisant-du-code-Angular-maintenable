@@ -1,4 +1,8 @@
+<app-header />
 <div class="center">
   <h2>No corresponding page found</h2>
-  <a routerLink="">Go back</a>
+  <p *ngIf="error" class="error">{{ error }}</p>
+  <button class="btn-back" routerLink="/">
+    Go back
+  </button>
 </div>
