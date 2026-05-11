@@ -6,3 +6,23 @@
   align-items: center;
   flex-direction: column;
 }
+
+.btn-back {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #0b868f;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-back:hover {
+  background-color: #08656c;
+  transform: translateY(-1px);
+}
+
+.btn-back:active {
+  transform: translateY(0);
+}
