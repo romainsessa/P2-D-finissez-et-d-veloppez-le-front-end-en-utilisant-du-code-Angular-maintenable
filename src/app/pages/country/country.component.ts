@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { DataService } from 'src/app/core/services/data.service';
 
 
@@ -8,7 +9,7 @@ import { DataService } from 'src/app/core/services/data.service';
   templateUrl: './country.component.html',
   styleUrls: ['./country.component.scss']
 })
-export class CountryComponent implements OnInit {
+export class CountryComponent implements OnInit, OnDestroy {
 
   public totalEntries: number = 0;
   public totalMedals: number = 0;
@@ -19,7 +20,9 @@ export class CountryComponent implements OnInit {
 
   public years: number[] = [];
   public medals: number[] = [];
+  
   public error!: string;
+  private destroy$ = new Subject<void>();  
 
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService) { }
 
@@ -34,7 +37,9 @@ export class CountryComponent implements OnInit {
 
     this.titlePage = countryName;
 
-    this.dataService.getCountryDetails(countryName).subscribe({
+    this.dataService.getCountryDetails(countryName)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (data) => {
         this.totalEntries = data.totalEntries;
         this.totalMedals = data.totalMedals;
@@ -57,10 +62,14 @@ export class CountryComponent implements OnInit {
 
   
   private redirectWithError(message: string): void {
-    console.error(message);
     this.router.navigate(['/not-found'], {
       queryParams: { error: message }
     });
-}
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
 }

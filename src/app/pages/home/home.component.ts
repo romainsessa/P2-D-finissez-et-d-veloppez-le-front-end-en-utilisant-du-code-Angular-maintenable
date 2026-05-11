@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { DataService } from 'src/app/core/services/data.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { DataService } from 'src/app/core/services/data.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   countries: string[] = [];
   medals: number[] = [];
@@ -19,12 +20,15 @@ export class HomeComponent implements OnInit {
 
   public hasData: boolean = false;
   public error: string = '';
+  private destroy$ = new Subject<void>();
 
   constructor(private router: Router, private dataService: DataService) { }
-
+  
   ngOnInit() {
 
-    this.dataService.getDashboardData().subscribe({
+    this.dataService.getDashboardData()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
       next: (data) => {
 
         this.hasData = data.countries.length > 0;
@@ -37,7 +41,6 @@ export class HomeComponent implements OnInit {
           return;
         }
 
-        console.log(`Liste des données : ${JSON.stringify(data)}`);
         this.countries = data.countries;
         this.medals = data.medals;
         this.totalCountries = data.totalCountries;
@@ -50,9 +53,7 @@ export class HomeComponent implements OnInit {
 
       },
       error: (err) => {
-        console.log(`erreur : ${err}`);
         this.hasData = false;
-
         if (err.status === 404) {
           this.error = 'Données inaccessibles';
         } else {
@@ -66,5 +67,9 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['country', country]);
   }
 
-}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
+}
