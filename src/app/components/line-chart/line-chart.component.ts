@@ -9,8 +9,8 @@ import { Chart } from 'chart.js/auto';
 export class LineChartComponent implements OnChanges, OnDestroy {
 
   @Input() years: number[] = [];
-  @Input() medals: string[] = [];
-  public lineChart!: Chart<"line", string[], number>;
+  @Input() medals: number[] = [];
+  public lineChart!: Chart<"line", number[], number>;
 
   ngOnChanges(changes: SimpleChanges): void {
      if (
