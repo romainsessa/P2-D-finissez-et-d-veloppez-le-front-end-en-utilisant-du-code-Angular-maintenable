@@ -1,6 +1,11 @@
 ## Arborescence :
 src/app/
 |-- components/
+|---- header
+|------ header.component.html
+|------ header.component.scss
+|------ header.component.spec.ts
+|------ header.component.ts
 |---- line-chart
 |------ line-chart.component.html
 |------ line-chart.component.scss

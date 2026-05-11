@@ -14,7 +14,10 @@ export class HomeComponent implements OnInit {
   public totalCountries: number = 0
   public totalJOs: number = 0
   public error!: string
+
   titlePage: string = "Medals per Country";
+  public indicators : { label: string; value: number }[] = [];
+
 
   constructor(private router: Router, private dataService: DataService) { }
 
@@ -26,13 +29,19 @@ export class HomeComponent implements OnInit {
         this.medals = data.medals;
         this.totalCountries = data.totalCountries;
         this.totalJOs = data.totalJOs;
+
+        this.indicators = [
+          { label: 'Number of countries', value: this.totalCountries },
+          { label: 'Number of JOs', value: this.totalJOs }
+        ];
+
       },
       error: (err) => {
         console.log(`erreur : ${err}`);
         this.error = err.message
       }
     });
-  } 
+  }
 
   onCountryClicked(country: string): void {
     this.router.navigate(['country', country]);

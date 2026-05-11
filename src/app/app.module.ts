@@ -8,9 +8,10 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { CountryComponent } from "./pages/country/country.component";
 import { PieChartComponent } from './components/pie-chart/pie-chart.component';
 import { LineChartComponent } from './components/line-chart/line-chart.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, NotFoundComponent, CountryComponent, PieChartComponent, LineChartComponent],
+  declarations: [AppComponent, HeaderComponent, HomeComponent, NotFoundComponent, CountryComponent, PieChartComponent, LineChartComponent],
   imports: [BrowserModule, AppRoutingModule],
   providers: [provideHttpClient()],
   bootstrap: [AppComponent],
