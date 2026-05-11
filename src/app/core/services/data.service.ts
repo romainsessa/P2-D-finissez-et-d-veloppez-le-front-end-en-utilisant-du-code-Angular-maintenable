@@ -24,6 +24,16 @@ export class DataService {
   }> {
     return this.getOlympicData().pipe(
       map(data => {
+
+        if (!data || data.length === 0) {
+          return {
+            countries: [],
+            medals: [],
+            totalCountries: 0,
+            totalJOs: 0
+          };
+        }
+
         const countries = data.map(d => d.country);
 
         const medals = data.map(d =>
@@ -50,7 +60,6 @@ export class DataService {
   }
 
   getCountryDetails(countryName: string): Observable<{
-    titlePage: string;
     totalEntries: number;
     totalMedals: number;
     totalAthletes: number;
@@ -69,7 +78,6 @@ export class DataService {
         const medals = country.participations.map(p => p.medalsCount);
 
         return {
-          titlePage: country.country,
           totalEntries: country.participations.length,
           years,
           medals,

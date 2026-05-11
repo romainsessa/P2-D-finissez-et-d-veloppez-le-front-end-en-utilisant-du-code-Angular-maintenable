@@ -1,5 +1,6 @@
 <app-header />
 <div class="center">
   <h2>No corresponding page found</h2>
+  <p *ngIf="error" class="error">{{ error }}</p>
   <a routerLink="">Go back</a>
 </div>

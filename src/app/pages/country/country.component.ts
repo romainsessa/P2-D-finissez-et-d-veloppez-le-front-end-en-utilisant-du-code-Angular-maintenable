@@ -15,43 +15,52 @@ export class CountryComponent implements OnInit {
   public totalAthletes: number = 0;
 
   public titlePage: string = '';
-  public indicators : { label: string; value: number }[] = [];
+  public indicators: { label: string; value: number }[] = [];
 
   public years: number[] = [];
   public medals: number[] = [];
   public error!: string;
 
-  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService) {  }
+  constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService) { }
 
   ngOnInit() {
     let countryName: string | null = null
     this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName'));
 
     if (!countryName) {
-      this.router.navigate(['/']);
+      this.redirectWithError('Invalid country'); 
       return;
     }
 
+    this.titlePage = countryName;
+
     this.dataService.getCountryDetails(countryName).subscribe({
       next: (data) => {
-        this.titlePage = data.titlePage;
         this.totalEntries = data.totalEntries;
         this.totalMedals = data.totalMedals;
         this.totalAthletes = data.totalAthletes;
         this.years = data.years;
         this.medals = data.medals;
 
-        this.indicators =[
-        { label: 'Number of entries', value: this.totalEntries },
-        { label: 'Total number medals', value: this.totalMedals },
-        { label: 'Total number of athletes', value: this.totalAthletes }
-      ];
+        this.indicators = [
+          { label: 'Number of entries', value: this.totalEntries },
+          { label: 'Total number medals', value: this.totalMedals },
+          { label: 'Total number of athletes', value: this.totalAthletes }
+        ];
 
-    },
+      },
       error: (err) => {
-        console.log(`erreur : ${err}`);
-        this.error = err.message
+        this.redirectWithError('Country not found');     
       }
     });
+  }
+
+  
+  private redirectWithError(message: string): void {
+    console.error(message);
+    this.router.navigate(['/not-found'], {
+      queryParams: { error: message }
+    });
 }
+
 }

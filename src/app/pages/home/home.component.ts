@@ -13,17 +13,30 @@ export class HomeComponent implements OnInit {
   medals: number[] = [];
   public totalCountries: number = 0
   public totalJOs: number = 0
-  public error!: string
 
   titlePage: string = "Medals per Country";
-  public indicators : { label: string; value: number }[] = [];
+  public indicators: { label: string; value: number }[] = [];
 
+  public hasData: boolean = false;
+  public error: string = '';
 
   constructor(private router: Router, private dataService: DataService) { }
 
   ngOnInit() {
+
     this.dataService.getDashboardData().subscribe({
       next: (data) => {
+
+        this.hasData = data.countries.length > 0;
+
+        if (!this.hasData) {
+          this.countries = [];
+          this.medals = [];
+          this.indicators = [];
+          this.error = "Aucune donnée."
+          return;
+        }
+
         console.log(`Liste des données : ${JSON.stringify(data)}`);
         this.countries = data.countries;
         this.medals = data.medals;
@@ -38,7 +51,13 @@ export class HomeComponent implements OnInit {
       },
       error: (err) => {
         console.log(`erreur : ${err}`);
-        this.error = err.message
+        this.hasData = false;
+
+        if (err.status === 404) {
+          this.error = 'Données inaccessibles';
+        } else {
+          this.error = 'Erreur technique, veuillez réessayer plus tard';
+        }
       }
     });
   }

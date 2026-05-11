@@ -1,11 +1,18 @@
 <div>
   <app-header 
-    [titlePage]="titlePage" , 
+    [titlePage]="titlePage" 
     [indicators]="indicators" />
-  <app-pie-chart 
-    [countries]="countries" 
-    [medals]="medals" 
-    chartId="DashboardPieChart"
-    (countryClicked)="onCountryClicked($event)">
-  </app-pie-chart>
+
+  <div *ngIf="hasData; else emptyState">
+    <app-pie-chart 
+      [countries]="countries" 
+      [medals]="medals" 
+      chartId="DashboardPieChart"
+      (countryClicked)="onCountryClicked($event)">
+    </app-pie-chart>
+  </div>
+
+  <ng-template #emptyState >
+    <p class="center">{{error}}</p>
+  </ng-template>
 </div>
