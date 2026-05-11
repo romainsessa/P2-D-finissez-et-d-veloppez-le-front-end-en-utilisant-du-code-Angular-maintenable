@@ -37,17 +37,27 @@ http://localhost:4200
 
 ## Structures du projet
 
-src/app/
-|-- components/
-|---- header
-|---- line-chart
-|---- pie-chart
-|-- pages/
-|---- country/
-|---- home/
-|---- not-found/
-|-- core/
-|---- services/
-|---- models
+src/app/  
+|-- components/  
+|---- header  
+|---- line-chart  
+|---- pie-chartf  
+|-- pages/  
+|---- country/  
+|---- home/  
+|---- not-found/  
+|-- core/  
+|---- services/  
+|---- models  
 
 ## Captures d'écran
+
+### Home Page
+![Home Desktop](home_desktop.png)
+![Home Tablette](home_tablette.png)
+![Home Mobile](home_mobile.png)
+
+### Country Page
+![Country Desktop](country_desktop.png)
+![Country Tablette](country_tablette.png)
+![Country Mobile](country_mobile.png)
