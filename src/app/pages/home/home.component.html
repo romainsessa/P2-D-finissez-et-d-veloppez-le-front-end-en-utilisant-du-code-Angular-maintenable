@@ -16,5 +16,10 @@
       </div>
     </div>
   </div>
-  <canvas id="DashboardPieChart">{{ pieChart }}</canvas>
+  <app-pie-chart
+    [countries]="countries"
+    [medals]="medals"
+    chartId="DashboardPieChart"
+    (countryClicked)="onCountryClicked($event)">
+  </app-pie-chart>  
 </div>

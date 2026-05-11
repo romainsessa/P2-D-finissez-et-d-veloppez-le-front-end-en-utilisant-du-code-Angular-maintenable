@@ -20,7 +20,12 @@
   </div>
   <div class="chart-container wrapper-container">
     <div class="container">
-      <canvas id="countryChart">{{ lineChart }}</canvas>
+      
+  <app-line-chart
+    [years]="years"
+    [medals]="medals"
+    chartId="CountryLineChart">
+  </app-line-chart>  
       <h2>Date</h2>
     </div>
   </div>

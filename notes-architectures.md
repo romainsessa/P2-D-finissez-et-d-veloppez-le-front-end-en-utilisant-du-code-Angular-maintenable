@@ -41,4 +41,6 @@ src/app/
 |------ country.ts
 |------ participation.ts
 
+- Architecture en couches appliqués à la structure du projet.
+- Utilisation de composants pour la réutilisabilité et la modularité du code.
 - L'intégration avec un futur backend est facilité grâce à la couche service. Il n'y aura aucun impact sur les components tant que la structure des données est respectée.
